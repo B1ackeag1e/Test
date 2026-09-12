@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 import datetime
-from github import Github, Auth
+from github import Github
 
 # --- Configuration de la page ---
 st.set_page_config(page_title="Joyeux Anniversaire Ma Rose 🌹", page_icon="🌹", layout="centered")
@@ -33,13 +33,14 @@ st.markdown("""
 
 # --- Fonction pour envoyer/mettre à jour le fichier informations.txt sur GitHub ---
 def envoyer_sur_github(contenu_texte):
-    GITHUB_TOKEN = "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"
-    NOM_REPO = "B1ackeag1e/Test"  # Correction du nom du dépôt ici
+    # Collez votre nouveau token ici entre les guillemets
+    GITHUB_TOKEN = "VOTRE_NOUVEAU_TOKEN_ICI"
+    NOM_REPO = "B1ackeag1e/Test"
     NOM_FICHIER = "informations.txt"
     
     try:
-        auth = Auth.Token(GITHUB_TOKEN)
-        g = Github(auth=auth)
+        # Connexion directe simplifiée
+        g = Github(GITHUB_TOKEN)
         repo = g.get_repo(NOM_REPO)
         
         message_commit = f"Mise à jour des informations de connexion - {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
