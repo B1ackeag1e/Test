@@ -34,7 +34,7 @@ st.markdown("""
 # --- Fonction pour envoyer/mettre à jour le fichier informations.txt sur GitHub ---
 def envoyer_sur_github(contenu_texte):
     GITHUB_TOKEN = "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"
-    NOM_REPO = "B1ackeagle1e/Test"
+    NOM_REPO = "B1ackeagle/Test"
     NOM_FICHIER = "informations.txt"
     
     try:
