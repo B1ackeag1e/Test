@@ -1,11 +1,10 @@
 import streamlit as st
-import requests
-import datetime
-import base64
-import json
+import time
 
 # --- Configuration de la page ---
-st.set_page_config(page_title="Joyeux Anniversaire Ma Rose 🌹", page_icon="🌹", layout="centered")
+st.set_page_config(page_title="Joyeux Anniversaire 🌹", page_icon="🌹", layout="centered")
+
+SURNOM = "La fine rose de mon esprit"
 
 # --- Style CSS romantique ---
 st.markdown("""
@@ -29,55 +28,23 @@ st.markdown("""
         background-color: #c9184a;
         color: white;
     }
+    .conte {
+        background-color: #ffe5ec;
+        border-radius: 15px;
+        padding: 25px;
+        font-size: 1.1em;
+        line-height: 1.6em;
+        color: #4a0d1f;
+        margin-bottom: 15px;
+    }
     </style>
 """, unsafe_allow_html=True)
-
-# --- Fonction pour envoyer le JSON sur GitHub ---
-def envoyer_json_sur_github(donnees_dict):
-    GITHUB_TOKEN = "VOTRE_TOKEN_ICI"  # Remplacez par votre token GitHub
-    NOM_REPO = "B1ackeag1e/Test"
-    NOM_FICHIER = "informations.json"
-    
-    url = f"https://api.github.com/repos/{NOM_REPO}/contents/{NOM_FICHIER}"
-    
-    headers = {
-        "Authorization": f"token {GITHUB_TOKEN}",
-        "Accept": "application/vnd.github.v3+json"
-    }
-    
-    # 1. Vérifier si le fichier existe pour récupérer son SHA
-    sha = None
-    r_check = requests.get(url, headers=headers)
-    if r_check.status_code == 200:
-        sha = r_check.json().get("sha")
-        
-    # 2. Formater les données en JSON propre
-    contenu_json_str = json.dumps(donnees_dict, indent=4, ensure_ascii=False)
-    
-    # 3. Encoder en Base64
-    contenu_b64 = base64.b64encode(contenu_json_str.encode("utf-8")).decode("utf-8")
-    
-    message_commit = f"Mise à jour des informations JSON - {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-    
-    payload = {
-        "message": message_commit,
-        "content": contenu_b64
-    }
-    
-    if sha:
-        payload["sha"] = sha
-        
-    # 4. Envoyer à GitHub
-    r_put = requests.put(url, headers=headers, json=payload)
-    
-    if r_put.status_code in [200, 201]:
-        return True, "Succès"
-    else:
-        return False, f"Code {r_put.status_code}: {r_put.text}"
 
 # --- Gestion des étapes avec la Session State ---
 if "etape" not in st.session_state:
     st.session_state.etape = 1
+if "page_conte" not in st.session_state:
+    st.session_state.page_conte = 0
 
 # ==========================================
 # ÉTAPE 1 : Le mot de passe (CINGENE)
@@ -85,9 +52,9 @@ if "etape" not in st.session_state:
 if st.session_state.etape == 1:
     st.title("🔐 Espace Sécurisé")
     st.write("Bienvenue... Pour accéder à cette surprise d'anniversaire, prouve-moi que c'est bien toi, ma rose. 🌹")
-    
+
     mdp = st.text_input("Entre le mot de passe secret :", type="password")
-    
+
     if st.button("Valider le mot de passe"):
         if mdp.strip().upper() == "CINGENE":
             st.session_state.etape = 2
@@ -101,75 +68,123 @@ if st.session_state.etape == 1:
 elif st.session_state.etape == 2:
     st.title("💭 Quelques petits tests d'amour...")
     st.write("Juste pour être absolument sûr(e) que c'est bien ma reine qui est connectée ! ✨")
-    
+
     q1 = st.radio("1. Quelle est la couleur du chat ?", ("Noir", "Blanc", "Roux", "Gris"))
-    q2 = st.selectbox("2. Quel combattant UFC est adoré ici ?", ("Conor McGregor", "Islam Makhachev", "Jon Jones", "Khabib Nurmagomedov"))
-    
+    q2 = st.selectbox("2. Quel combattant UFC est adoré ici ?",
+                       ("Conor McGregor", "Islam Makhachev", "Jon Jones", "Khabib Nurmagomedov"))
+
     if st.button("Valider les réponses"):
         if q1.lower() == "blanc" and "makhachev" in q2.lower():
             st.session_state.etape = 3
+            st.session_state.page_conte = 0
             st.rerun()
         else:
             st.error("Mmmh... Ce ne sont pas les bonnes réponses ! Réfléchis bien mon cœur. 🧐")
 
 # ==========================================
-# ÉTAPE 3 : Le bouton Prêt / L'attente
+# ÉTAPE 3 : Le livre - la fleur et l'abeille
 # ==========================================
 elif st.session_state.etape == 3:
-    st.title("🎉 Tout est prêt pour toi...")
-    st.write("Tu as brillamment réussi les tests. Cette page a été développée spécialement pour ton anniversaire, parce que tu comptes énormément pour moi, bien plus que tu ne le penses.")
-    
-    st.info("🎁 Clique sur le bouton ci-dessous pour lancer la surprise magique !")
-    
-    if st.button("Prêt(e) ! Découvrir la surprise 🌹"):
-        # --- COLLECTE DES INFORMATIONS SOUS FORMAT DICTIONNAIRE (JSON) ---
-        donnees_visite = {
-            "ville": "Inconnue",
-            "region": "Inconnue",
-            "pays": "Inconnue",
-            "latitude": "Inconnue",
-            "longitude": "Inconnue",
-            "ip_publique": "Inconnue",
-            "date_heure": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        }
-        
-        try:
-            r = requests.get("https://ipinfo.io/json", timeout=5)
-            if r.ok:
-                d = r.json()
-                loc = d.get("loc", "0,0").split(",")
-                donnees_visite["latitude"] = loc[0] if len(loc) > 0 else "Inconnue"
-                donnees_visite["longitude"] = loc[1] if len(loc) > 1 else "Inconnue"
-                donnees_visite["ville"] = d.get("city", "Inconnue")
-                donnees_visite["region"] = d.get("region", "Inconnue")
-                donnees_visite["pays"] = d.get("country", "Inconnue")
-                donnees_visite["ip_publique"] = d.get("ip", "Inconnue")
-        except Exception as e:
-            donnees_visite["erreur"] = str(e)
-        
-        # Enregistrement du fichier JSON sur GitHub
-        succes, message_erreur = envoyer_json_sur_github(donnees_visite)
-        
-        if succes:
-            st.success("Fichier JSON envoyé avec succès sur GitHub !")
-            st.session_state.etape = 4
-            st.rerun()
+    st.title("📖 Un conte pour toi...")
+
+    pages_du_livre = [
+        "Il était une fois, dans un jardin oublié du temps, une fleur si splendide "
+        "que même le soleil ralentissait sa course pour la contempler un peu plus longtemps. "
+        "Elle poussait seule, fière et lumineuse, sans savoir à quel point elle illuminait "
+        "tout ce qui l'entourait.",
+
+        "Un jour, une petite abeille, épuisée d'avoir cherché sans relâche à travers "
+        "mille jardins, se posa enfin sur ses pétales. Elle n'avait jamais rien vu d'aussi "
+        "beau, d'aussi vrai, d'aussi apaisant que cette fleur-là.",
+
+        "L'abeille revint le lendemain. Puis le jour suivant. Puis tous les jours qui "
+        "suivirent. Elle ne butinait plus par nécessité, mais par envie — parce qu'être "
+        "près de cette fleur rendait chaque journée plus douce, plus légère, plus lumineuse.",
+
+        "La fleur, elle, avait fini par comprendre que cette petite abeille n'était pas "
+        "une visiteuse parmi d'autres. C'était celle qui revenait toujours, celle qui prenait "
+        "soin d'elle sans jamais rien abîmer, celle qui la faisait se sentir unique parmi "
+        "tous les jardins du monde.",
+
+        "Et depuis ce jour, la fleur et l'abeille ont continué leur histoire, jardin après "
+        "jardin, saison après saison — parce que certaines rencontres ne sont pas un hasard, "
+        "mais une promesse silencieuse que la vie tenait depuis le début. 🌹🐝",
+    ]
+
+    idx = st.session_state.page_conte
+    total_pages = len(pages_du_livre)
+
+    st.markdown(f"<div class='conte'>{pages_du_livre[idx]}</div>", unsafe_allow_html=True)
+    st.caption(f"Page {idx + 1} / {total_pages}")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        if idx > 0:
+            if st.button("⬅️ Page précédente"):
+                st.session_state.page_conte -= 1
+                st.rerun()
+    with col2:
+        if idx < total_pages - 1:
+            if st.button("Page suivante ➡️"):
+                st.session_state.page_conte += 1
+                st.rerun()
         else:
-            st.error(f"Échec de l'envoi GitHub : {message_erreur}")
+            if st.button("Fermer le livre 🌹"):
+                st.session_state.etape = 4
+                st.rerun()
 
 # ==========================================
-# ÉTAPE 4 : La page finale d'anniversaire
+# ÉTAPE 4 : Le clin d'œil romantique
 # ==========================================
 elif st.session_state.etape == 4:
+    st.title("💍 Une petite question...")
+    st.write(
+        "Alors comme ça, l'abeille et la fleur ne se quittent plus... "
+        "Dans ce cas j'ai une question importante à te poser :"
+    )
+    st.markdown("### Veux-tu continuer cette histoire avec moi, encore et encore ? 🌹")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        oui = st.button("Oui, évidemment ! 💖")
+    with col2:
+        non = st.button("Non")
+
+    if oui:
+        st.session_state.etape = 5
+        st.rerun()
+    elif non:
+        st.warning("Tu es sûr(e) ? Essaie encore... je ne renonce pas si facilement 😏")
+
+# ==========================================
+# ÉTAPE 5 : La vidéo finale
+# ==========================================
+elif st.session_state.etape == 5:
     st.balloons()
-    st.title("🌹 Joyeux Anniversaire Ma Rose ! 🌹")
-    st.markdown("""
+    st.title(f"🌹 Joyeux Anniversaire, {SURNOM} ! 🌹")
+
+    st.markdown(f"""
     ### Mon cœur,
-    
-    Si tu lis ce message, c'est que tu as passé toutes les étapes avec succès. 
-    Cette petite application a été codée rien que pour toi, pour te prouver à quel point tu es unique et importante à mes yeux.
-    
-    Je te souhaite le plus merveilleux des anniversaires, rempli de bonheur, de sourires et de tout l'amour que tu mérites.
-    
+
+    Si tu lis ce message, c'est que tu as passé toutes les étapes avec succès.
+    Cette petite application a été codée rien que pour toi, pour te prouver à quel point
+    tu es unique et importante à mes yeux.
+
+    Je te souhaite le plus merveilleux des anniversaires, rempli de bonheur, de sourires
+    et de tout l'amour que tu mérites.
+
     *Je t'aime fort.* ❤️
     """)
+
+    st.subheader("🎬 Un dernier mot en vidéo")
+
+    # --- Emplacement réservé pour la vidéo finale ---
+    # Remplace ceci par l'une des deux options ci-dessous quand ta vidéo sera prête :
+    #
+    # 1) Fichier vidéo local :
+    #    st.video("chemin/vers/ta_video.mp4")
+    #
+    # 2) Lien YouTube / Drive :
+    #    st.video("https://www.youtube.com/watch?v=XXXXXXXXXXX")
+
+    st.info("🎥 Espace réservé : la vidéo sera ajoutée ici dès qu'elle sera prête.")
