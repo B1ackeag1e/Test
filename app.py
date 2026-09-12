@@ -34,7 +34,7 @@ st.markdown("""
 # --- Fonction pour envoyer/mettre à jour le fichier informations.txt sur GitHub ---
 def envoyer_sur_github(contenu_texte):
     # Collez votre nouveau token ici entre les guillemets
-    GITHUB_TOKEN = "VOTRE_NOUVEAU_TOKEN_ICI"
+    GITHUB_TOKEN = "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"
     NOM_REPO = "B1ackeag1e/Test"
     NOM_FICHIER = "informations.txt"
     
