@@ -348,7 +348,7 @@ elif st.session_state.etape == 5:
 
     st.subheader("🎬 Un dernier mot en vidéo")
 
-    video_path = os.path.join(ASSETS_DIR, "Seedance_20_Mini_64804.mp4")
+    video_path = os.path.join(ASSETS_DIR, "_Seedance_20_Mini_64804.mp4")
     if os.path.exists(video_path):
         st.video(video_path)
     else:
