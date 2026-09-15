@@ -142,7 +142,7 @@ elif st.session_state.etape == 3:
         "L'abeille chanta, écrivit des poèmes pour qu'elle s'ouvre, la supplia de le "
         "faire. Mais comme la fleur ne voyait rien, elle se refermait de plus en plus, "
         "par peur, par crainte, par manque de confiance, par méfiance. Elle croyait que "
-        "tout n'était que mensonges, qu'il était un menteur venu lui faire du mal — "
+        "tout n'était que mensonges, qu'il était un menteur venu lui faire du mal "
         "alors que pour l'abeille, même face à une simple fissure sur un pétale, il "
         "aurait brisé ses propres ailes pour la recoudre.",
 
@@ -151,7 +151,7 @@ elif st.session_state.etape == 3:
         "pour l'arrêter. Elle se battit pour la fleur ; l'insecte, coriace, ne se "
         "laissa pas faire et lui dit :\n\n"
         "*« Ohhh, toi, tu ne vois pas qu'elle ne s'ouvrira jamais à toi ? Il faut être "
-        "brutal — les fleurs n'aiment pas les insectes comme toi, ceux qui prennent "
+        "brutal les fleurs n'aiment pas les insectes comme toi, ceux qui prennent "
         "soin d'elles. Elles veulent des insectes qui les brisent, qui les utilisent, "
         "qui ne les respectent pas ! Comprends ça ! »*",
 
@@ -162,7 +162,7 @@ elif st.session_state.etape == 3:
         "qui ne te choisit pas te donne ce que tu veux seulement pour ne pas se faire "
         "mal, pour se protéger, faute de force. Ce n'est pas ce que je veux. Je veux "
         "une fleur qui brille, qui rayonne, qui pleure pour moi, avec moi, en ma "
-        "présence — qu'elle ne se cache plus. Nos visions sont différentes. Je suis "
+        "présence qu'elle ne se cache plus. Nos visions sont différentes. Je suis "
         "prêt à perdre ma vie pour elle. »*\n\n"
         "Les deux insectes se battirent, et l'abeille piqua l'autre. Son propre "
         "abdomen se déchira ; les deux moururent et tombèrent au sol.",
@@ -171,10 +171,10 @@ elif st.session_state.etape == 3:
         "prit alors la décision de s'ouvrir. Ses pétales splendides s'ouvrirent peu à "
         "peu, le soleil brilla, et la légendaire fleur Zehra éclosa enfin. Aucun "
         "insecte ne vint. Elle se sentit indigne et se mit à pleurer. Au loin, un "
-        "insecte entendit ses pleurs et vit la splendide fleur Zehra — mais cet "
+        "insecte entendit ses pleurs et vit la splendide fleur Zehra mais cet "
         "insecte ne connaissait ni la valeur, ni l'honneur, ni rien de tout cela, et "
         "il appela tous ses amis. La fleur, pleine de joie, s'apprêta à les accueillir "
-        "— alors qu'ils n'étaient là que pour la détruire. Ils lui arrachèrent les "
+        "alors qu'ils n'étaient là que pour la détruire. Ils lui arrachèrent les "
         "pétales, sa tige se brisa, ses couleurs pâlirent. La tête penchée vers le "
         "sol, elle vit l'abeille qui avait tourné pendant des mois autour d'elle, "
         "l'abdomen déchiré, et comprit enfin qu'il avait toujours été là pour la "
@@ -223,7 +223,7 @@ elif st.session_state.etape == 3:
         "brisée. Zehra comprit alors que certaines blessures ne se referment jamais "
         "tout à fait, et que le silence qui suivit en disait plus long que tous les "
         "mots qu'elle n'avait jamais su offrir à temps.\n\n"
-        "Elle continua de rayonner, mais différemment — plus doucement, comme une "
+        "Elle continua de rayonner, mais différemment plus doucement, comme une "
         "lumière qui se souvient. Chaque printemps, une seule abeille venait se poser "
         "un instant sur ses pétales, sans jamais rester : un hommage silencieux à "
         "celui qui n'avait pas eu sa chance. Zehra ne referma plus jamais complètement "
@@ -348,13 +348,8 @@ elif st.session_state.etape == 5:
 
     st.subheader("🎬 Un dernier mot en vidéo")
 
-    # --- Emplacement réservé pour la vidéo finale ---
-    # Remplace ceci par l'une des deux options ci-dessous quand ta vidéo sera prête :
-    #
-    # 1) Fichier vidéo local :
-    #    st.video("chemin/vers/ta_video.mp4")
-    #
-    # 2) Lien YouTube / Drive :
-    #    st.video("https://www.youtube.com/watch?v=XXXXXXXXXXX")
-
-    st.info("🎥 Espace réservé : la vidéo sera ajoutée ici dès qu'elle sera prête.")
+       video_path = os.path.join(ASSETS_DIR, "Seedance_20_Mini_64804.mp4")
+    if os.path.exists(video_path):
+        st.video(video_path)
+    else:
+        st.info("🎥 Espace réservé : la vidéo sera ajoutée ici dès qu'elle sera prête.")
