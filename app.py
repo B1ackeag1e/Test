@@ -6,6 +6,7 @@ import os
 st.set_page_config(page_title="Joyeux Anniversaire 🌹", page_icon="🌹", layout="centered")
 
 SURNOM = "La fine rose de mon esprit"
+ASSETS_DIR = "assets"  # Dossier contenant images, audios et vidéo
 
 # --- Style CSS romantique ---
 st.markdown("""
@@ -107,7 +108,6 @@ elif st.session_state.etape == 3:
     #   assets/conte_page{N}.jpg          -> l'illustration de la page
     #   assets/conte_page{N}_audio.mp3    -> la narration audio de la page
     # Ils s'afficheront automatiquement dès qu'ils existent, sans retoucher le code.
-    ASSETS_DIR = "assets"
 
     def afficher_page(texte, image_path=None, audio_path=None):
         """Affiche une page du conte avec, si disponibles, une image et une narration audio."""
@@ -348,7 +348,7 @@ elif st.session_state.etape == 5:
 
     st.subheader("🎬 Un dernier mot en vidéo")
 
-       video_path = os.path.join(ASSETS_DIR, "Seedance_20_Mini_64804.mp4")
+    video_path = os.path.join(ASSETS_DIR, "Seedance_20_Mini_64804.mp4")
     if os.path.exists(video_path):
         st.video(video_path)
     else:
