@@ -1,5 +1,6 @@
 import streamlit as st
 import time
+import os
 
 # --- Configuration de la page ---
 st.set_page_config(page_title="Joyeux Anniversaire 🌹", page_icon="🌹", layout="centered")
@@ -101,23 +102,25 @@ elif st.session_state.etape == 2:
 elif st.session_state.etape == 3:
     st.title("📖 La légende de la fleur Zehra")
 
-    # --- Musique d'ambiance pour accompagner la lecture du conte ---
-    # Remplace le chemin ci-dessous par ton propre fichier audio (mp3/wav/ogg)
-    # ou par une URL directe vers un fichier audio.
-    # Exemples :
-    #   st.audio("assets/musique_conte.mp3", autoplay=True, loop=True)
-    #   st.audio("https://exemple.com/musique.mp3", autoplay=True)
-    st.markdown(
-        "<div class='conte-titre'>🎵 Une petite musique pour accompagner l'histoire...</div>",
-        unsafe_allow_html=True,
-    )
-    try:
-        st.audio("assets/musique_conte.mp3", autoplay=True, loop=True)
-    except Exception:
-        st.info("🎵 Espace réservé : la musique du conte sera ajoutée ici dès qu'elle sera prête.")
+    # --- Dossier où déposer les fichiers d'illustration et de narration ---
+    # Pour chaque page N, dépose (si tu veux) :
+    #   assets/conte_page{N}.jpg          -> l'illustration de la page
+    #   assets/conte_page{N}_audio.mp3    -> la narration audio de la page
+    # Ils s'afficheront automatiquement dès qu'ils existent, sans retoucher le code.
+    ASSETS_DIR = "assets"
+
+    def afficher_page(texte, image_path=None, audio_path=None):
+        """Affiche une page du conte avec, si disponibles, une image et une narration audio."""
+        if image_path and os.path.exists(image_path):
+            st.image(image_path, use_container_width=True)
+        st.markdown(f"<div class='conte'>{texte}</div>", unsafe_allow_html=True)
+        if audio_path and os.path.exists(audio_path):
+            st.audio(audio_path)
+        else:
+            st.caption(f"🎙️ Espace réservé pour la narration audio de cette page (dépose le fichier ici : {audio_path})")
 
     # --- Pages communes du conte (avant la bifurcation) ---
-    pages_du_livre = [
+    textes_du_livre = [
         "Dans une colonie d'abeilles, tous les jours on parlait de la légendaire fleur "
         "Zehra. C'était une fleur tellement splendide, tellement belle, que ses pétales "
         "rayonnaient : à travers eux, on pouvait voir la réfraction de la lumière et "
@@ -178,6 +181,17 @@ elif st.session_state.etape == 3:
         "protéger.",
     ]
 
+    # Construction des pages : chaque page va automatiquement chercher son image
+    # et son audio dans le dossier assets/ (voir afficher_page ci-dessus).
+    pages_du_livre = [
+        {
+            "texte": texte,
+            "image": os.path.join(ASSETS_DIR, f"conte_page{i}.jpg"),
+            "audio": os.path.join(ASSETS_DIR, f"conte_page{i}_audio.mp3"),
+        }
+        for i, texte in enumerate(textes_du_livre, start=1)
+    ]
+
     # --- Les deux fins possibles ---
     fin_oui = (
         "Une larme sincère, remplie d'émotion, d'amour, de chagrin et de regret, tomba "
@@ -221,7 +235,8 @@ elif st.session_state.etape == 3:
 
     # --- Navigation dans les pages communes ---
     if st.session_state.branche is None and idx < total_pages:
-        st.markdown(f"<div class='conte'>{pages_du_livre[idx]}</div>", unsafe_allow_html=True)
+        page = pages_du_livre[idx]
+        afficher_page(page["texte"], page["image"], page["audio"])
         st.caption(f"Page {idx + 1} / {total_pages}")
 
         col1, col2 = st.columns(2)
@@ -268,8 +283,15 @@ elif st.session_state.etape == 3:
 
     # --- Affichage de la fin choisie ---
     else:
-        texte_fin = fin_oui if st.session_state.branche == "oui" else fin_non
-        st.markdown(f"<div class='conte'>{texte_fin}</div>", unsafe_allow_html=True)
+        if st.session_state.branche == "oui":
+            texte_fin = fin_oui
+            image_fin = os.path.join(ASSETS_DIR, "conte_fin_heureuse.jpg")
+            audio_fin = os.path.join(ASSETS_DIR, "conte_fin_heureuse_audio.mp3")
+        else:
+            texte_fin = fin_non
+            image_fin = os.path.join(ASSETS_DIR, "conte_fin_melancolique.jpg")
+            audio_fin = os.path.join(ASSETS_DIR, "conte_fin_melancolique_audio.mp3")
+        afficher_page(texte_fin, image_fin, audio_fin)
 
         col1, col2 = st.columns(2)
         with col1:
