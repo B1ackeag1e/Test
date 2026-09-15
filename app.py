@@ -101,6 +101,21 @@ elif st.session_state.etape == 2:
 elif st.session_state.etape == 3:
     st.title("📖 La légende de la fleur Zehra")
 
+    # --- Musique d'ambiance pour accompagner la lecture du conte ---
+    # Remplace le chemin ci-dessous par ton propre fichier audio (mp3/wav/ogg)
+    # ou par une URL directe vers un fichier audio.
+    # Exemples :
+    #   st.audio("assets/musique_conte.mp3", autoplay=True, loop=True)
+    #   st.audio("https://exemple.com/musique.mp3", autoplay=True)
+    st.markdown(
+        "<div class='conte-titre'>🎵 Une petite musique pour accompagner l'histoire...</div>",
+        unsafe_allow_html=True,
+    )
+    try:
+        st.audio("assets/musique_conte.mp3", autoplay=True, loop=True)
+    except Exception:
+        st.info("🎵 Espace réservé : la musique du conte sera ajoutée ici dès qu'elle sera prête.")
+
     # --- Pages communes du conte (avant la bifurcation) ---
     pages_du_livre = [
         "Dans une colonie d'abeilles, tous les jours on parlait de la légendaire fleur "
