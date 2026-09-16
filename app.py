@@ -490,12 +490,42 @@ elif st.session_state.etape == 4:
             "cousu ton rire au fil de mes silences,<br>"
             "et si tu pars, je resterai la trace<br>"
             "d'un amour qui n'a pas su te retenir.<br><br>"
+            "Allah est témoin de ce que j'ai vécu :<br>"
+            "les nuits sans sommeil, les repas oubliés,<br>"
+            "un amour trop grand pour tenir dans un seul cœur,<br>"
+            "et c'est moi, je crois, qui en ai porté le plus lourd.<br><br>"
+            "J'ai gardé mes tempêtes enfermées en moi,<br>"
+            "jamais un mot dur n'est sorti vers toi,<br>"
+            "même quand tout en moi voulait exploser,<br>"
+            "j'ai préféré me taire plutôt que te blesser.<br><br>"
+            "Le jour où j'ai su que tu avais eu mal,<br>"
+            "j'ai senti cette douleur jusque dans mes mains,<br>"
+            "comme si c'était les miennes qui avaient souffert —<br>"
+            "ton mal est devenu, ce jour-là, le mien.<br><br>"
+            "Il y a des jours que je ne pourrai pas voir,<br>"
+            "non par rancune, mais pour protéger ce qu'il me reste,<br>"
+            "mon cœur n'est pas assez fort pour certaines images —<br>"
+            "ce n'est pas te fuir, c'est simplement me préserver.<br><br>"
             "Mais si jamais ce cœur hésite encore,<br>"
             "s'il te reste un battement pour nous deux,<br>"
             "alors ne dis rien, ne pars pas plus loin,<br>"
             "reviens, et laisse-moi te le prouver. 🌹"
         )
         st.markdown(f"<div class='poeme'>{poeme}</div>", unsafe_allow_html=True)
+
+        poeme_turc = (
+            "SANA KIYAMAM ZİLİ CİNGENEM, AY PARÇAM, AY ÇİÇEĞİM, FİKRİMİN İNCE GÜLÜ.<br><br>"
+            "ALLAH YOLUNU AÇIK ETSİN, SENİ TEK GÜVENDİĞİM, TEK GÜCÜ HER ŞEYE YETEN "
+            "ALLAH'A EMANET EDİYORUM.<br><br>"
+            "ELİMDEN GELENİ YAPTIM, ALLAH ŞAHİDİM. SENİ BAŞKA BİRİYLE GÖRSEM SANKI "
+            "ETİMİN İĞNEYLE TEK TEK DİKİLDİĞİNİ HİSSEDERİM.<br><br>"
+            "O YÜZDEN AY PARÇAM, ÜÇ ŞEYİ GÖRMEYE DAYANAMAM: DÜĞÜNÜNÜ, ÖLÜMÜNÜ, VE BİR "
+            "GÜN ALLAH'IN RAHMETİNDEN UZAK KALIRSAN ONU DA — SANA KİN TUTTUĞUMDAN "
+            "DEĞİL, KALBİM BU ÜÇ ACIDAN BİRİNE ŞAHİT OLMAYA DAYANAMAYACAĞI İÇİN.<br><br>"
+            "ÇÜNKÜ SENİ DÜŞÜNEMEYECEĞİM VE SÖZLERİN YETMEYECEĞİ KADAR SEVDİM.<br><br>"
+            "ELVEDA CİNGENE :)"
+        )
+        st.markdown(f"<div class='poeme'>{poeme_turc}</div>", unsafe_allow_html=True)
 
         col1, col2 = st.columns(2)
         with col1:
