@@ -513,20 +513,6 @@ elif st.session_state.etape == 4:
         )
         st.markdown(f"<div class='poeme'>{poeme}</div>", unsafe_allow_html=True)
 
-        poeme_turc = (
-            "SANA KIYAMAM ZİLİ CİNGENEM, AY PARÇAM, AY ÇİÇEĞİM, FİKRİMİN İNCE GÜLÜ.<br><br>"
-            "ALLAH YOLUNU AÇIK ETSİN, SENİ TEK GÜVENDİĞİM, TEK GÜCÜ HER ŞEYE YETEN "
-            "ALLAH'A EMANET EDİYORUM.<br><br>"
-            "ELİMDEN GELENİ YAPTIM, ALLAH ŞAHİDİM. SENİ BAŞKA BİRİYLE GÖRSEM SANKI "
-            "ETİMİN İĞNEYLE TEK TEK DİKİLDİĞİNİ HİSSEDERİM.<br><br>"
-            "O YÜZDEN AY PARÇAM, ÜÇ ŞEYİ GÖRMEYE DAYANAMAM: DÜĞÜNÜNÜ, ÖLÜMÜNÜ, VE BİR "
-            "GÜN ALLAH'IN RAHMETİNDEN UZAK KALIRSAN ONU DA — SANA KİN TUTTUĞUMDAN "
-            "DEĞİL, KALBİM BU ÜÇ ACIDAN BİRİNE ŞAHİT OLMAYA DAYANAMAYACAĞI İÇİN.<br><br>"
-            "ÇÜNKÜ SENİ DÜŞÜNEMEYECEĞİM VE SÖZLERİN YETMEYECEĞİ KADAR SEVDİM.<br><br>"
-            "ELVEDA CİNGENE :)"
-        )
-        st.markdown(f"<div class='poeme'>{poeme_turc}</div>", unsafe_allow_html=True)
-
         col1, col2 = st.columns(2)
         with col1:
             oui3 = st.button("Reviens... Oui 💖", key="oui_3")
