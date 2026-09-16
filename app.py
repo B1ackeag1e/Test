@@ -534,6 +534,10 @@ elif st.session_state.etape == 5:
     st.balloons()
     st.title(f"🌹 Joyeux Anniversaire, {SURNOM} ! 🌹")
 
+    st.markdown("---")
+    afficher_cadeau(key_suffix="etape5")
+    st.markdown("---")
+
     st.markdown(f"""
     ### Mon cœur,
 
@@ -556,7 +560,6 @@ elif st.session_state.etape == 5:
         st.info("🎥 Espace réservé : la vidéo sera ajoutée ici dès qu'elle sera prête.")
 
     st.markdown("---")
-    afficher_cadeau(key_suffix="etape5")
 
 # ==========================================
 # ÉTAPE 6 : Réponse définitive "Non" — page finale
