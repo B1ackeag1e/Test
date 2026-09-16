@@ -1,12 +1,56 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import time
 import os
+from urllib.parse import urlparse, parse_qs
 
 # --- Configuration de la page ---
 st.set_page_config(page_title="Joyeux Anniversaire 🌹", page_icon="🌹", layout="centered")
 
 SURNOM = "La fine rose de mon esprit"
 ASSETS_DIR = "assets"  # Dossier contenant images, audios et vidéo
+
+# --- ⚠️ À COMPLÉTER : ton vrai code cadeau (diamants MLBB) ---
+CODE_CADEAU = "COLLE_TON_CODE_ICI"
+
+# --- Liens vers les vidéos YouTube et les reels Instagram (page définitive) ---
+LIENS_YOUTUBE = [
+    "https://www.youtube.com/watch?v=9arjfCYUqZQ",
+    "https://www.youtube.com/watch?v=ccYt6LEQtP8",
+    "https://www.youtube.com/watch?v=Oz81pRgInvQ&list=RDc4MTNy6f3zA&index=2",
+    "https://www.youtube.com/watch?v=zcm-BLRHbXk&list=RDc4MTNy6f3zA&index=5",
+    "https://www.youtube.com/watch?v=MSFdUFicJs0&list=RDc4MTNy6f3zA&index=6",
+    "https://www.youtube.com/watch?v=TpkO39xa6u0",
+    "https://www.youtube.com/watch?v=TibfapmqpIM",
+    "https://www.youtube.com/watch?v=nMQGnemX9Do",
+    "https://www.youtube.com/watch?v=t9k0DgK8Ty0",
+    "https://www.youtube.com/watch?v=5G3IOM-l-Ck",
+    "https://www.youtube.com/watch?v=MGYJd1tqwio",
+]
+
+LIENS_INSTAGRAM = [
+    "https://www.instagram.com/reels/Dc351xboHSX/",
+    "https://www.instagram.com/reels/DdBI1REIuqX/",
+    "https://www.instagram.com/reels/DaD08qZNxnv/",
+    "https://www.instagram.com/reels/DdHN9VCjTcI/",
+    "https://www.instagram.com/reels/DTBgGEIj1C6/",
+]
+
+
+def extraire_id_youtube(url):
+    """Reconstruit une URL YouTube propre (sans paramètres de playlist parasites)."""
+    parsed = urlparse(url)
+    video_id = parse_qs(parsed.query).get("v", [None])[0]
+    if video_id:
+        return f"https://www.youtube.com/watch?v={video_id}"
+    return url
+
+
+def extraire_shortcode_instagram(url):
+    """Extrait le shortcode d'un lien Instagram (reel ou reels) pour construire l'URL d'embed."""
+    chemin = urlparse(url).path.strip("/")
+    parts = [p for p in chemin.split("/") if p not in ("reel", "reels")]
+    return parts[0] if parts else None
 
 # --- Style CSS romantique ---
 st.markdown("""
@@ -59,12 +103,87 @@ st.markdown("""
         margin-bottom: 15px;
         animation: fadeInPage 1.2s ease-in-out;
     }
+    .cadeau-box {
+        text-align: center;
+        margin: 25px 0;
+    }
+    .cadeau-emoji {
+        font-size: 5em;
+        animation: popOpen 0.6s ease-in-out;
+    }
+    .cadeau-code {
+        background-color: #fff0f3;
+        border: 2px dashed #ff4d6d;
+        border-radius: 12px;
+        padding: 18px;
+        font-size: 1.4em;
+        font-weight: bold;
+        letter-spacing: 2px;
+        color: #d90429;
+        text-align: center;
+        margin: 15px 0;
+        animation: fadeInPage 1s ease-in-out;
+    }
+    .cadeau-instructions {
+        background-color: #ffe5ec;
+        border-radius: 12px;
+        padding: 20px;
+        color: #4a0d1f;
+        line-height: 1.6em;
+        animation: fadeInPage 1.3s ease-in-out;
+    }
     @keyframes fadeInPage {
         0% { opacity: 0; transform: translateY(12px); }
         100% { opacity: 1; transform: translateY(0); }
     }
+    @keyframes popOpen {
+        0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+        60% { transform: scale(1.15) rotate(5deg); opacity: 1; }
+        100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
     </style>
 """, unsafe_allow_html=True)
+
+
+def afficher_cadeau(key_suffix=""):
+    """Affiche le coffret cadeau : bouton pour l'ouvrir, animation, code + mode d'emploi."""
+    flag = f"cadeau_ouvert_{key_suffix}"
+    if flag not in st.session_state:
+        st.session_state[flag] = False
+
+    st.markdown("### 🎁 Un dernier cadeau pour toi...")
+
+    if not st.session_state[flag]:
+        if st.button("🎁 Ouvrir le cadeau", key=f"ouvrir_{key_suffix}"):
+            st.session_state[flag] = True
+            st.rerun()
+    else:
+        st.markdown(
+            "<div class='cadeau-box'><div class='cadeau-emoji'>🎉🎁🎉</div></div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f"<div class='cadeau-code'>{CODE_CADEAU}</div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            """
+            <div class='cadeau-instructions'>
+            <b>Comment utiliser ce code (diamants Mobile Legends: Bang Bang) :</b><br><br>
+            1. Ouvre l'application <b>Mobile Legends: Bang Bang</b> sur ton téléphone.<br>
+            2. Va dans ton <b>profil</b> (ton avatar, en haut à gauche de l'écran d'accueil).<br>
+            3. Repère l'option <b>« Code de rédemption »</b> (parfois listée dans les
+            paramètres ou accessible via le site officiel de redemption Moonton).<br>
+            4. Entre le code <b>exactement</b> comme indiqué ci-dessus (respecte les
+            majuscules, les minuscules et les tirets).<br>
+            5. Valide, puis va vérifier ta <b>boîte mail in-game</b> (icône enveloppe) :
+            les diamants y sont généralement livrés automatiquement après validation.<br>
+            6. Si le code est refusé, vérifie qu'il n'a pas déjà été utilisé et qu'il n'a
+            pas de date d'expiration dépassée.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
 # --- Gestion des étapes avec la Session State ---
 if "etape" not in st.session_state:
@@ -389,7 +508,8 @@ elif st.session_state.etape == 4:
             st.session_state.etape = 5
             st.rerun()
         elif non3:
-            st.error("Je ne te crois pas. Réessaie, mon cœur ne renoncera jamais à toi. 😏🌹")
+            st.session_state.etape = 6
+            st.rerun()
 
 # ==========================================
 # ÉTAPE 5 : La vidéo finale
@@ -418,3 +538,39 @@ elif st.session_state.etape == 5:
         st.video(video_path)
     else:
         st.info("🎥 Espace réservé : la vidéo sera ajoutée ici dès qu'elle sera prête.")
+
+    st.markdown("---")
+    afficher_cadeau(key_suffix="etape5")
+
+# ==========================================
+# ÉTAPE 6 : Réponse définitive "Non" — page finale
+# ==========================================
+elif st.session_state.etape == 6:
+    st.title("🥀 D'accord...")
+    st.write(
+        "Tu as choisi, et je respecte ça. Avant de refermer cette page pour de bon, "
+        "voici quelques dernières choses que je voulais partager avec toi."
+    )
+
+    st.markdown("### 🎬 Quelques vidéos")
+    for lien in LIENS_YOUTUBE:
+        st.video(extraire_id_youtube(lien))
+
+    st.markdown("### 📸 Quelques reels")
+    for lien in LIENS_INSTAGRAM:
+        shortcode = extraire_shortcode_instagram(lien)
+        if shortcode:
+            components.html(
+                f"""
+                <blockquote class="instagram-media"
+                    data-instgrm-permalink="https://www.instagram.com/reel/{shortcode}/"
+                    data-instgrm-version="14"
+                    style="max-width:400px; margin:auto;">
+                </blockquote>
+                <script async src="//www.instagram.com/embed.js"></script>
+                """,
+                height=600,
+            )
+
+    st.markdown("---")
+    afficher_cadeau(key_suffix="etape6")
