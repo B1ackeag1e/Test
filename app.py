@@ -47,6 +47,18 @@ st.markdown("""
         margin-bottom: 20px;
         animation: fadeInPage 1.2s ease-in-out;
     }
+    .poeme {
+        background-color: #2b0f14;
+        border-radius: 15px;
+        padding: 30px;
+        font-size: 1.1em;
+        line-height: 1.8em;
+        color: #ffe5ec;
+        font-style: italic;
+        text-align: center;
+        margin-bottom: 15px;
+        animation: fadeInPage 1.2s ease-in-out;
+    }
     @keyframes fadeInPage {
         0% { opacity: 0; transform: translateY(12px); }
         100% { opacity: 1; transform: translateY(0); }
@@ -61,6 +73,8 @@ if "page_conte" not in st.session_state:
     st.session_state.page_conte = 0
 if "branche" not in st.session_state:
     st.session_state.branche = None  # None, "oui" ou "non"
+if "non_count" not in st.session_state:
+    st.session_state.non_count = 0  # nombre de fois où "Non" a été cliqué à l'étape 4
 
 # ==========================================
 # ÉTAPE 1 : Le mot de passe (CINGENE)
@@ -314,17 +328,68 @@ elif st.session_state.etape == 4:
     )
     st.markdown("### Veux-tu continuer cette histoire avec moi, encore et encore ? 🌹")
 
-    col1, col2 = st.columns(2)
-    with col1:
-        oui = st.button("Oui, évidemment ! 💖")
-    with col2:
-        non = st.button("Non")
+    if st.session_state.non_count == 0:
+        # Premier passage : question simple
+        col1, col2 = st.columns(2)
+        with col1:
+            oui = st.button("Oui, évidemment ! 💖", key="oui_1")
+        with col2:
+            non = st.button("Non", key="non_1")
 
-    if oui:
-        st.session_state.etape = 5
-        st.rerun()
-    elif non:
+        if oui:
+            st.session_state.etape = 5
+            st.rerun()
+        elif non:
+            st.session_state.non_count = 1
+            st.rerun()
+
+    elif st.session_state.non_count == 1:
+        # Deuxième passage : on insiste une première fois
         st.warning("Tu es sûr(e) ? Essaie encore... je ne renonce pas si facilement 😏")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            oui2 = st.button("Oui, évidemment ! 💖", key="oui_2")
+        with col2:
+            non2 = st.button("Non", key="non_2")
+
+        if oui2:
+            st.session_state.etape = 5
+            st.rerun()
+        elif non2:
+            st.session_state.non_count = 2
+            st.rerun()
+
+    else:
+        # Troisième "Non" : le poème d'adieu
+        poeme = (
+            "Si c'est vraiment ce que tu veux,<br>"
+            "alors laisse-moi te dire adieu,<br>"
+            "avec les mots que je n'ai jamais su taire,<br>"
+            "avant que ne se referme cette page.<br><br>"
+            "J'aurai porté ton nom comme une promesse,<br>"
+            "cousu ton rire au fil de mes silences,<br>"
+            "et si tu pars, je resterai la trace<br>"
+            "d'un amour qui n'a pas su te retenir.<br><br>"
+            "Mais si jamais ce cœur hésite encore,<br>"
+            "s'il te reste un battement pour nous deux,<br>"
+            "alors ne dis rien, ne pars pas plus loin,<br>"
+            "reviens, et laisse-moi te le prouver. 🌹"
+        )
+        st.markdown(f"<div class='poeme'>{poeme}</div>", unsafe_allow_html=True)
+
+        col1, col2 = st.columns(2)
+        with col1:
+            oui3 = st.button("Reviens... Oui 💖", key="oui_3")
+        with col2:
+            non3 = st.button("Non, c'est fini", key="non_3")
+
+        if oui3:
+            st.session_state.non_count = 0
+            st.session_state.etape = 5
+            st.rerun()
+        elif non3:
+            st.error("Je ne te crois pas. Réessaie, mon cœur ne renoncera jamais à toi. 😏🌹")
 
 # ==========================================
 # ÉTAPE 5 : La vidéo finale
