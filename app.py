@@ -565,8 +565,12 @@ elif st.session_state.etape == 6:
     st.title("🥀 D'accord...")
     st.write(
         "Tu as choisi, et je respecte ça. Avant de refermer cette page pour de bon, "
-        "voici quelques dernières choses que je voulais partager avec toi."
+        "voici quelques dernières choses que je voulais partager avec toi. Les chansons que j'écoutais et qui me faisaient penser à toi"
     )
+
+    afficher_cadeau(key_suffix="etape6")
+    st.markdown("---")
+    
     poeme_turc_etape6 = (
         "SANA KIYAMAM ZİLİ CİNGENEM, AY PARÇAM, AY ÇİÇEĞİM, FİKRİMİN İNCE GÜLÜ.<br><br>"
         "ALLAH YOLUNU AÇIK ETSİN, SENİ TEK GÜVENDİĞİM, TEK GÜCÜ HER ŞEYE YETEN "
@@ -581,8 +585,6 @@ elif st.session_state.etape == 6:
     )
     st.markdown(f"<div class='poeme'>{poeme_turc_etape6}</div>", unsafe_allow_html=True)
 
-    st.markdown("---")
-    afficher_cadeau(key_suffix="etape6")
     st.markdown("---")
     
     st.markdown("### 🎬 Quelques vidéos")
