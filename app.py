@@ -538,6 +538,21 @@ elif st.session_state.etape == 5:
     afficher_cadeau(key_suffix="etape5")
     st.markdown("---")
 
+    st.subheader("📸 Un petit souvenir")
+    shortcode = extraire_shortcode_instagram("https://www.instagram.com/reels/DaD08qZNxnv/")
+    if shortcode:
+        components.html(
+            f"""
+            <blockquote class="instagram-media"
+                data-instgrm-permalink="https://www.instagram.com/reel/{shortcode}/"
+                data-instgrm-version="14"
+                style="max-width:400px; margin:auto;">
+            </blockquote>
+            <script async src="//www.instagram.com/embed.js"></script>
+            """,
+            height=600,
+        )
+    
     st.markdown(f"""
     ### Mon cœur,
 
