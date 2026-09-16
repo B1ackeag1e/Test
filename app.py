@@ -581,7 +581,24 @@ elif st.session_state.etape == 6:
         "Tu as choisi, et je respecte ça. Avant de refermer cette page pour de bon, "
         "voici quelques dernières choses que je voulais partager avec toi."
     )
+    poeme_turc_etape6 = (
+        "SANA KIYAMAM ZİLİ CİNGENEM, AY PARÇAM, AY ÇİÇEĞİM, FİKRİMİN İNCE GÜLÜ.<br><br>"
+        "ALLAH YOLUNU AÇIK ETSİN, SENİ TEK GÜVENDİĞİM, TEK GÜCÜ HER ŞEYE YETEN "
+        "ALLAH'A EMANET EDİYORUM.<br><br>"
+        "ELİMDEN GELENİ YAPTIM, ALLAH ŞAHİDİM. SENİ BAŞKA BİRİYLE GÖRSEM SANKI "
+        "ETİMİN İĞNEYLE TEK TEK DİKİLDİĞİNİ HİSSEDERİM.<br><br>"
+        "O YÜZDEN AY PARÇAM, ÜÇ ŞEYİ GÖRMEYE DAYANAMAM: DÜĞÜNÜNÜ, ÖLÜMÜNÜ, VE BİR "
+        "GÜN ALLAH'IN RAHMETİNDEN UZAK KALIRSAN ONU DA — SANA KİN TUTTUĞUMDAN "
+        "DEĞİL, KALBİM BU ÜÇ ACIDAN BİRİNE ŞAHİT OLMAYA DAYANAMAYACAĞI İÇİN.<br><br>"
+        "ÇÜNKÜ SENİ DÜŞÜNEMEYECEĞİM VE SÖZLERİN YETMEYECEĞİ KADAR SEVDİM.<br><br>"
+        "ELVEDA CİNGENE :)"
+    )
+    st.markdown(f"<div class='poeme'>{poeme_turc_etape6}</div>", unsafe_allow_html=True)
 
+    st.markdown("---")
+    afficher_cadeau(key_suffix="etape6")
+    st.markdown("---")
+    
     st.markdown("### 🎬 Quelques vidéos")
     for lien in LIENS_YOUTUBE:
         st.video(extraire_id_youtube(lien))
@@ -601,6 +618,3 @@ elif st.session_state.etape == 6:
                 """,
                 height=600,
             )
-
-    st.markdown("---")
-    afficher_cadeau(key_suffix="etape6")
