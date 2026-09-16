@@ -538,7 +538,6 @@ elif st.session_state.etape == 5:
     afficher_cadeau(key_suffix="etape5")
     st.markdown("---")
 
-    st.subheader("📸 Un petit souvenir")
     shortcode = extraire_shortcode_instagram("https://www.instagram.com/reels/DaD08qZNxnv/")
     if shortcode:
         components.html(
