@@ -269,13 +269,13 @@ if st.session_state.etape == 1:
 # ==========================================
 elif st.session_state.etape == 2:
     st.title("💭 Quelques petits tests d'amour...")
-    st.write("Juste pour être absolument sûr(e) que c'est bien ma reine qui est connectée ! ✨")
+    st.write("Juste pour être absolument sûr que c'est bien ma petite princesse qui est connectée ! ✨")
 
     q1 = st.radio("1. Quelle est la couleur du chat ?", ("Noir", "Blanc", "Roux", "Gris"))
     q2 = st.selectbox("2. Quel combattant UFC est adoré ici ?",
                        ("Conor McGregor", "Islam Makhachev", "Jon Jones", "Khabib Nurmagomedov"))
     q3 = st.selectbox("3. Quelle est ta ville d'origine ?",
-                       ("Yozgat", "Erzurum", "Istanbul", "Izmir", "Bursa", "Ankara", "Antalya"))
+                       ("Erzurum", "Istanbul", "Yozgat", "Izmir", "Bursa", "Ankara", "Antalya"))
 
     if st.button("Valider les réponses"):
         if q1.lower() == "blanc" and "makhachev" in q2.lower() and q3.lower() == "yozgat":
