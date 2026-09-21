@@ -15,7 +15,7 @@ SURNOM = "La fine rose de mon esprit"
 ASSETS_DIR = "assets"  # Dossier contenant images, audios et vidéo
 
 # --- ⚠️ À COMPLÉTER : ton vrai code cadeau (diamants MLBB) ---
-CODE_CADEAU = "COLLE_TON_CODE_ICI"
+CODE_CADEAU = "s998p2zkhmfw23h9c"
 
 # --- Liens vers les vidéos YouTube et les reels Instagram (page définitive) ---
 LIENS_YOUTUBE = [
@@ -221,8 +221,8 @@ def afficher_cadeau(key_suffix=""):
             <div class='cadeau-instructions'>
             <b>Comment utiliser ce code (diamants Mobile Legends: Bang Bang) :</b><br><br>
             1. Ouvre l'application <b>Mobile Legends: Bang Bang</b> sur ton téléphone.<br>
-            2. Va dans ton <b>profil</b> (ton avatar, en haut à gauche de l'écran d'accueil).<br>
-            3. Repère l'option <b>« Code de rédemption »</b> (parfois listée dans les
+            2. Va dans ton <b>profil</b> (ton avatar, en haut à droite de l'écran d'accueil).<br>
+            3. Repère l'option <b>« Code d'échange »</b> (parfois listée dans les
             paramètres ou accessible via le site officiel de redemption Moonton).<br>
             4. Entre le code <b>exactement</b> comme indiqué ci-dessus (respecte les
             majuscules, les minuscules et les tirets).<br>
