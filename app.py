@@ -246,7 +246,7 @@ if "non_count" not in st.session_state:
     st.session_state.non_count = 0  # nombre de fois où "Non" a été cliqué à l'étape 4
 
 # ==========================================
-# ÉTAPE 1 : Le mot de passe (CINGENE)
+# ÉTAPE 1 : Le mot de passe (CEYLANGOZLUM)
 # ==========================================
 if st.session_state.etape == 1:
     enregistrer_une_fois("ouverture", "👀 Elle a ouvert l'application")
@@ -257,7 +257,7 @@ if st.session_state.etape == 1:
     mdp = st.text_input("Entre le mot de passe secret :", type="password")
 
     if st.button("Valider le mot de passe"):
-        if mdp.strip().upper() == "CINGENE":
+        if mdp.strip().upper() == "CEYLANGOZLUM":
             enregistrer("🔓 Mot de passe validé")
             st.session_state.etape = 2
             st.rerun()
@@ -274,9 +274,11 @@ elif st.session_state.etape == 2:
     q1 = st.radio("1. Quelle est la couleur du chat ?", ("Noir", "Blanc", "Roux", "Gris"))
     q2 = st.selectbox("2. Quel combattant UFC est adoré ici ?",
                        ("Conor McGregor", "Islam Makhachev", "Jon Jones", "Khabib Nurmagomedov"))
+    q3 = st.selectbox("3. Quelle est ta ville d'origine ?",
+                       ("Yozgat", "Erzurum", "Istanbul", "Izmir", "Bursa", "Ankara", "Antalya"))
 
     if st.button("Valider les réponses"):
-        if q1.lower() == "blanc" and "makhachev" in q2.lower():
+        if q1.lower() == "blanc" and "makhachev" in q2.lower() and q3.lower() == "yozgat":
             enregistrer("✅ Questions personnelles réussies")
             st.session_state.etape = 3
             st.session_state.page_conte = 0
@@ -523,7 +525,7 @@ elif st.session_state.etape == 4:
 
     elif st.session_state.non_count == 1:
         # Deuxième passage : on insiste une première fois
-        st.warning("Tu es sûr(e) ? Essaie encore... je ne renonce pas si facilement 😏")
+        st.warning("Tu es sûre ? Essaie encore... je ne renonce pas si facilement 😏")
 
         col1, col2 = st.columns(2)
         with col1:
@@ -662,7 +664,7 @@ elif st.session_state.etape == 6:
         "ELİMDEN GELENİ YAPTIM, ALLAH ŞAHİDİM. SENİ BAŞKA BİRİYLE GÖRSEM SANKI "
         "ETİMİN İĞNEYLE TEK TEK DİKİLDİĞİNİ HİSSEDERİM.<br><br>"
         "O YÜZDEN AY PARÇAM, ÜÇ ŞEYİ GÖRMEYE DAYANAMAM: DÜĞÜNÜNÜ, ÖLÜMÜNÜ, VE BİR "
-        "GÜN ALLAH'IN RAHMETİNDEN UZAK KALIRSAN ONU DA — SANA KİN TUTTUĞUMDAN "
+        "GÜN ALLAH'IN RAHMETİNDEN UZAK KALIRSAN ONU DA SANA KİN TUTTUĞUMDAN "
         "DEĞİL, KALBİM BU ÜÇ ACIDAN BİRİNE ŞAHİT OLMAYA DAYANAMAYACAĞI İÇİN.<br><br>"
         "ÇÜNKÜ SENİ DÜŞÜNEMEYECEĞİM VE SÖZLERİN YETMEYECEĞİ KADAR SEVDİM.<br><br>"
         "ELVEDA CİNGENE :)"
