@@ -2,6 +2,10 @@ import streamlit as st
 import streamlit.components.v1 as components
 import time
 import os
+import threading
+import requests
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from urllib.parse import urlparse, parse_qs
 
 # --- Configuration de la page ---
@@ -35,6 +39,51 @@ LIENS_INSTAGRAM = [
     "https://www.instagram.com/reels/DdHN9VCjTcI/",
     "https://www.instagram.com/reels/DTBgGEIj1C6/",
 ]
+
+
+# ==========================================
+# ENREGISTREMENT DES RÉPONSES SUR GITHUB
+# ==========================================
+# Secrets à définir (Streamlit Cloud : Settings > Secrets, ou .streamlit/secrets.toml en local) :
+#   GITHUB_TOKEN = "github_pat_xxxxxxxx"   (token fine-grained, permission Issues : Read and write)
+#   GITHUB_REPO  = "ton-pseudo/anniv-reponses"   (dépôt PRIVÉ)
+def _envoyer_issue(repo, token, titre, corps):
+    """Crée une issue GitHub (exécuté en arrière-plan, erreurs ignorées)."""
+    try:
+        requests.post(
+            f"https://api.github.com/repos/{repo}/issues",
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Accept": "application/vnd.github+json",
+            },
+            json={"title": titre, "body": corps},
+            timeout=8,
+        )
+    except Exception:
+        pass
+
+
+def enregistrer(message):
+    """Enregistre un événement comme issue GitHub, sans bloquer l'interface."""
+    try:
+        repo = st.secrets["GITHUB_REPO"]
+        token = st.secrets["GITHUB_TOKEN"]
+    except Exception:
+        return  # secrets absents : on ignore silencieusement
+    horodatage = datetime.now(ZoneInfo("Europe/Paris")).strftime("%d/%m/%Y à %H:%M:%S")
+    threading.Thread(
+        target=_envoyer_issue,
+        args=(repo, token, message, horodatage),
+        daemon=True,
+    ).start()
+
+
+def enregistrer_une_fois(cle, message):
+    """Comme enregistrer(), mais une seule fois par session (évite les doublons à chaque rerun)."""
+    flag = f"_log_{cle}"
+    if not st.session_state.get(flag):
+        st.session_state[flag] = True
+        enregistrer(message)
 
 
 def extraire_id_youtube(url):
@@ -155,6 +204,7 @@ def afficher_cadeau(key_suffix=""):
 
     if not st.session_state[flag]:
         if st.button("🎁 Ouvrir le cadeau", key=f"ouvrir_{key_suffix}"):
+            enregistrer("🎁 Cadeau ouvert")
             st.session_state[flag] = True
             st.rerun()
     else:
@@ -199,6 +249,8 @@ if "non_count" not in st.session_state:
 # ÉTAPE 1 : Le mot de passe (CINGENE)
 # ==========================================
 if st.session_state.etape == 1:
+    enregistrer_une_fois("ouverture", "👀 Elle a ouvert l'application")
+
     st.title("🔐 Espace Sécurisé")
     st.write("Bienvenue... Pour accéder à cette surprise d'anniversaire, prouve-moi que c'est bien toi, ma rose. 🌹")
 
@@ -206,6 +258,7 @@ if st.session_state.etape == 1:
 
     if st.button("Valider le mot de passe"):
         if mdp.strip().upper() == "CINGENE":
+            enregistrer("🔓 Mot de passe validé")
             st.session_state.etape = 2
             st.rerun()
         else:
@@ -224,6 +277,7 @@ elif st.session_state.etape == 2:
 
     if st.button("Valider les réponses"):
         if q1.lower() == "blanc" and "makhachev" in q2.lower():
+            enregistrer("✅ Questions personnelles réussies")
             st.session_state.etape = 3
             st.session_state.page_conte = 0
             st.rerun()
@@ -408,9 +462,11 @@ elif st.session_state.etape == 3:
             non_histoire = st.button("Non")
 
         if oui_histoire:
+            enregistrer("📖 Conte : elle a choisi OUI (seconde chance)")
             st.session_state.branche = "oui"
             st.rerun()
         elif non_histoire:
+            enregistrer("📖 Conte : elle a choisi NON")
             st.session_state.branche = "non"
             st.rerun()
 
@@ -433,6 +489,7 @@ elif st.session_state.etape == 3:
                 st.rerun()
         with col2:
             if st.button("Fermer le livre 🌹"):
+                enregistrer("📕 Livre fermé, elle passe à la question finale")
                 st.session_state.etape = 4
                 st.rerun()
 
@@ -456,9 +513,11 @@ elif st.session_state.etape == 4:
             non = st.button("Non", key="non_1")
 
         if oui:
+            enregistrer("💖 RÉPONSE : OUI dès le 1er essai !")
             st.session_state.etape = 5
             st.rerun()
         elif non:
+            enregistrer("😬 Réponse : Non (1er clic)")
             st.session_state.non_count = 1
             st.rerun()
 
@@ -473,9 +532,11 @@ elif st.session_state.etape == 4:
             non2 = st.button("Non", key="non_2")
 
         if oui2:
+            enregistrer("💖 RÉPONSE : OUI au 2e essai (après un premier Non)")
             st.session_state.etape = 5
             st.rerun()
         elif non2:
+            enregistrer("😬 Réponse : Non (2e clic)")
             st.session_state.non_count = 2
             st.rerun()
 
@@ -520,10 +581,12 @@ elif st.session_state.etape == 4:
             non3 = st.button("Non, c'est fini", key="non_3")
 
         if oui3:
+            enregistrer("💖 RÉPONSE : OUI après le poème d'adieu !")
             st.session_state.non_count = 0
             st.session_state.etape = 5
             st.rerun()
         elif non3:
+            enregistrer("🥀 RÉPONSE : NON définitif après le poème")
             st.session_state.etape = 6
             st.rerun()
 
@@ -531,6 +594,8 @@ elif st.session_state.etape == 4:
 # ÉTAPE 5 : La vidéo finale
 # ==========================================
 elif st.session_state.etape == 5:
+    enregistrer_une_fois("arrivee_etape5", "🌹 Elle est arrivée sur la page finale (branche OUI)")
+
     st.balloons()
     st.title(f"🌹 Joyeux Anniversaire, {SURNOM} ! 🌹")
 
@@ -579,6 +644,8 @@ elif st.session_state.etape == 5:
 # ÉTAPE 6 : Réponse définitive "Non" — page finale
 # ==========================================
 elif st.session_state.etape == 6:
+    enregistrer_une_fois("arrivee_etape6", "🥀 Elle est arrivée sur la page finale (branche NON)")
+
     st.title("🥀 D'accord...")
     st.write(
         "Tu as choisi, et je respecte ça. Avant de refermer cette page pour de bon, "
