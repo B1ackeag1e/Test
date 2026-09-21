@@ -15,7 +15,7 @@ SURNOM = "La fine rose de mon esprit"
 ASSETS_DIR = "assets"  # Dossier contenant images, audios et vidéo
 
 # --- ⚠️ À COMPLÉTER : ton vrai code cadeau (diamants MLBB) ---
-CODE_CADEAU = "s998p2zkhmfw23h9c"
+CODE_CADEAU = "vw73c87fcmps23mjj"
 
 # --- Liens vers les vidéos YouTube et les reels Instagram (page définitive) ---
 LIENS_YOUTUBE = [
